@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+import time
 
 pygame.init()
 
@@ -17,10 +18,25 @@ dimCH = height / nyC
 # Cells' state. Alive == 1; Death == 0
 gameState = np.zeros((nxC, nyC))
 
+# Stick automata.
+gameState[5,3] = 1
+gameState[5, 4] = 1
+gameState[5, 5] = 1
+
+# Movil automata.
+gameState[21, 21] = 1
+gameState[22, 22] = 1
+gameState[22, 23] = 1
+gameState[21, 23] = 1
+gameState[20, 23] = 1
+
 # Execution Loop
 while True:
 
   newGameState = np.copy(gameState)
+
+  screen.fill(bg)
+  time.sleep(0.1)
   
   for y in range(0, nxC):
     for x in range(0, nyC):
