@@ -10,7 +10,7 @@ screen = pygame.display.set_mode((height, width))
 bg = 25, 25, 25
 screen.fill(bg)
 
-nxC, nyC = 25, 25
+nxC, nyC = 50, 50
 
 dimCW = width / nxC
 dimCH = height / nyC
@@ -30,6 +30,9 @@ gameState[22, 23] = 1
 gameState[21, 23] = 1
 gameState[20, 23] = 1
 
+# Game execution control
+pauseExec = False
+
 # Execution Loop
 while True:
 
@@ -37,27 +40,36 @@ while True:
 
   screen.fill(bg)
   time.sleep(0.1)
+
+  # Listen to keyword and mouse events.
+  ev = pygame.event.get()
+
+  for event in ev:
+    if event.type == pygame.KEYDOWN:
+      pauseExec = not pauseExec
   
   for y in range(0, nxC):
     for x in range(0, nyC):
 
-      # Calculates the number of neighbours (toroidal approach)
-      n_neigh = gameState[(x-1) % nxC, (y-1) % nyC] + \
-                gameState[(x)   % nxC, (y-1) %  nyC] + \
-                gameState[(x+1) % nxC, (y-1) % nyC] + \
-                gameState[(x-1) % nxC, (y) % nyC] + \
-                gameState[(x+1) % nxC, (y) % nyC] + \
-                gameState[(x-1) % nxC, (y + 1) % nyC] + \
-                gameState[(x)   % nxC, (y + 1) % nyC] + \
-                gameState[(x + 1) % nxC, (y + 1) % nyC]
+      if not pauseExec:
 
-      # Rule #1 : A dead cell with exactly 3 alive neighbours, revives.
-      if gameState[x, y] == 0 and n_neigh == 3:
-        newGameState[x, y] = 1
+        # Calculates the number of neighbours (toroidal approach)
+        n_neigh = gameState[(x-1) % nxC, (y-1) % nyC] + \
+                  gameState[(x)   % nxC, (y-1) %  nyC] + \
+                  gameState[(x+1) % nxC, (y-1) % nyC] + \
+                  gameState[(x-1) % nxC, (y) % nyC] + \
+                  gameState[(x+1) % nxC, (y) % nyC] + \
+                  gameState[(x-1) % nxC, (y + 1) % nyC] + \
+                  gameState[(x)   % nxC, (y + 1) % nyC] + \
+                  gameState[(x + 1) % nxC, (y + 1) % nyC]
 
-      # Rule #2 : An alive cell with less than 2 or more than 3 alive neighbours, die.
-      elif gameState[x, y] == 1 and (n_neigh < 2 or n_neigh > 3):
-        newGameState[x, y] = 0
+        # Rule #1 : A dead cell with exactly 3 alive neighbours, revives.
+        if gameState[x, y] == 0 and n_neigh == 3:
+          newGameState[x, y] = 1
+
+        # Rule #2 : An alive cell with less than 2 or more than 3 alive neighbours, die.
+        elif gameState[x, y] == 1 and (n_neigh < 2 or n_neigh > 3):
+          newGameState[x, y] = 0
 
       # Creates the polygon of each cell to display it.
       poly = [
