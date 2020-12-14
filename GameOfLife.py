@@ -45,8 +45,16 @@ while True:
   ev = pygame.event.get()
 
   for event in ev:
+    # Detects if a key was pressed.
     if event.type == pygame.KEYDOWN:
       pauseExec = not pauseExec
+    # Detects if the mouse was pressed.
+    mouseClick = pygame.mouse.get_pressed()
+
+    if sum(mouseClick) > 0:
+      posX, posY = pygame.mouse.get_pos()
+      celX, celY = int(np.floor(posX / dimCW)), int(np.floor(posY / dimCH))
+      newGameState[celX, celY] = 1
   
   for y in range(0, nxC):
     for x in range(0, nyC):
